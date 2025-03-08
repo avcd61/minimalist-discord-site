@@ -4,6 +4,10 @@ type Callback = (members: DiscordMember[]) => void;
 let subscriber: Callback | null = null;
 const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
 
+// Добавляем задержку между запросами
+const POLLING_INTERVAL = 10000; // 10 секунд
+const RETRY_DELAY = 5000; // 5 секунд
+
 export async function fetchToken(): Promise<string> {
   const res = await fetch(`${API_URL}/api/token`);
   if (!res.ok) throw new Error(`Failed to fetch token: ${res.statusText}`);
@@ -21,22 +25,37 @@ export async function fetchMembers(token: string): Promise<DiscordMember[]> {
 export function subscribeToMembers(callback: Callback): () => void {
   subscriber = callback;
   let intervalId: NodeJS.Timeout;
+  let isPolling = false;
 
   const startPolling = async () => {
+    if (isPolling) return;
+    isPolling = true;
+
     try {
       const token = await fetchToken();
-      intervalId = setInterval(async () => {
+      
+      const poll = async () => {
         try {
           const members = await fetchMembers(token);
           if (subscriber) subscriber(members);
+          // Планируем следующий запрос
+          intervalId = setTimeout(poll, POLLING_INTERVAL);
         } catch (error) {
           console.error("Error fetching members:", error);
           toast.error("Failed to update members");
+          // При ошибке пробуем снова через RETRY_DELAY
+          intervalId = setTimeout(poll, RETRY_DELAY);
         }
-      }, 5000);
+      };
+
+      // Запускаем первый запрос
+      await poll();
     } catch (error) {
       console.error("Error initializing polling:", error);
       toast.error("Failed to connect to server");
+      isPolling = false;
+      // Пробуем переподключиться через RETRY_DELAY
+      setTimeout(startPolling, RETRY_DELAY);
     }
   };
 
@@ -44,7 +63,8 @@ export function subscribeToMembers(callback: Callback): () => void {
 
   return () => {
     subscriber = null;
-    if (intervalId) clearInterval(intervalId);
+    isPolling = false;
+    if (intervalId) clearTimeout(intervalId);
   };
 }
 
