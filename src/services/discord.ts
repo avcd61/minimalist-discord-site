@@ -2,7 +2,7 @@ import { toast } from "sonner";
 
 type Callback = (members: DiscordMember[]) => void;
 let subscriber: Callback | null = null;
-const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+const API_URL = window.location.origin;
 
 // Добавляем задержку между запросами
 const POLLING_INTERVAL = 10000; // 10 секунд
