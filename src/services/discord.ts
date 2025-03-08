@@ -2,12 +2,7 @@ import { toast } from "sonner";
 
 type Callback = (members: DiscordMember[]) => void;
 let subscriber: Callback | null = null;
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
-const DISCORD_PUBLIC_TOKEN = import.meta.env.VITE_DISCORD_PUBLIC_TOKEN;
-
-if (!API_URL || !DISCORD_PUBLIC_TOKEN) {
-  console.warn("VITE_API_URL or VITE_DISCORD_PUBLIC_TOKEN is not defined, using default values");
-}
+const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
 
 export async function fetchToken(): Promise<string> {
   const res = await fetch(`${API_URL}/api/token`);
@@ -64,12 +59,6 @@ export const requestMemberUpdate = async (): Promise<void> => {
   }
 };
 
-export interface Role {
-  name: string;
-  color?: string;
-  position: number;
-}
-
 export interface MemberStatus {
   online: boolean;
   mic: boolean;
@@ -85,4 +74,10 @@ export interface DiscordMember {
   isOwner: boolean;
   joinedAt?: string;
   status: MemberStatus;
+}
+
+interface Role {
+  name: string;
+  color: string | null;
+  position: number;
 }
