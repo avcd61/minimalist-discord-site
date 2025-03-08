@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../dist/api",
+    "rootDir": "./api",
+    "noEmit": false,
+    "composite": true, // Требуется для references
+    "declaration": true, // Генерируем декларации
+    "isolatedModules": false // Убрано, так как не нужно для серверлесс
+  },
+  "include": ["api/**/*"]
+}

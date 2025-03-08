@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "moduleDetection": "force",
+    "noEmit": false, // Убрано для совместимости с composite
+    "emitDeclarationOnly": true, // Генерируем только .d.ts
+    "declaration": true, // Включаем декларации
+    "composite": true, // Требуется для references
+    "useDefineForClassFields": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": false
+  },
+  "include": ["src/**/*", "vite.config.ts"]
+}

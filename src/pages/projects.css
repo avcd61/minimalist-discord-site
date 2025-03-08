@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Rye&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Roboto+Mono&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 30% 98%;
+    --foreground: 30 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 30 94% 42%;
+    --primary-foreground: 30 10% 98%;
+
+    --secondary: 60 20% 92%;
+    --secondary-foreground: 24 9.8% 10%;
+
+    --muted: 30 10% 92%;
+    --muted-foreground: 25 5.3% 44.7%;
+
+    --accent: 12 76% 61%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 24 5.7% 85.1%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 30 83.7% 40.2%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 20 14% 4%;
+    --foreground: 30 10% 92%;
+
+    --card: 24 10% 10%;
+    --card-foreground: 30 10% 94%;
+
+    --popover: 20 14% 4%;
+    --popover-foreground: 30 10% 92%;
+
+    --primary: 30 80% 50%;
+    --primary-foreground: 30 10% 98%;
+
+    --secondary: 12 6% 15%;
+    --secondary-foreground: 60 9.1% 97.8%;
+
+    --muted: 12 6.5% 15.1%;
+    --muted-foreground: 24 5.4% 63.9%;
+
+    --accent: 12 70% 45%;
+    --accent-foreground: 60 9.1% 97.8%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 12 6.5% 15.1%;
+    --input: 12 6.5% 15.1%;
+    --ring: 35.5 91.7% 32.9%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  /* Western paper background */
+  .bg-western-paper {
+    background-color: #f5ecd5;
+    background-image: url('/textures/paper-texture.png');
+    background-size: cover;
+    background-blend-mode: multiply;
+  }
+
+  /* Noise pattern for texture */
+  .bg-noise-pattern {
+    background-image: url('/textures/noise.png');
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    mix-blend-mode: overlay;
+  }
+
+  /* Western card styling */
+  .western-card {
+    background-color: #f5ecd5;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    border: 1px solid #8c7851;
+    transform-style: preserve-3d;
+    will-change: transform;
+    overflow: hidden;
+  }
+
+  /* Paper texture for cards */
+  .western-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/textures/paper-texture.png');
+    background-size: cover;
+    opacity: 0.4;
+    pointer-events: none;
+    border-radius: inherit;
+    transform: translateZ(-1px);
+  }
+
+  /* Coffee stain effect */
+  .western-card-stain::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 65% 35%, rgba(156, 123, 73, 0.3) 0%, transparent 45%);
+    pointer-events: none;
+    border-radius: inherit;
+    transform: translateZ(-1px);
+  }
+
+  /* Card overlay texture */
+  .card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/textures/card-overlay.png');
+    background-size: cover;
+    opacity: 0.15;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    border-radius: inherit;
+    transform: translateZ(-1px);
+  }
+
+  /* Wood grain effect */
+  .wood-grain {
+    background-image: linear-gradient(90deg, 
+      rgba(156, 123, 73, 0.3) 0%, 
+      rgba(139, 108, 61, 0.3) 20%, 
+      rgba(123, 94, 52, 0.3) 40%, 
+      rgba(139, 108, 61, 0.3) 60%, 
+      rgba(156, 123, 73, 0.3) 80%, 
+      rgba(139, 108, 61, 0.3) 100%);
+    transform: translateZ(0);
+  }
+
+  /* Text balance utility */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* 3D perspective utilities */
+  .perspective {
+    perspective: 1200px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+  }
+  
+  /* Text shadow effect */
+  .text-shadow {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Burned paper effect */
+  .burned-edge {
+    position: relative;
+    padding: 1rem;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .burned-edge::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/textures/burned-edge.png');
+    background-size: 100% 100%;
+    pointer-events: none;
+    opacity: 0.4;
+    z-index: -1;
+  }
+
+  /* Leather texture */
+  .leather-texture {
+    background-color: #5c4731;
+    background-image: url('/textures/leather-texture.png');
+    background-blend-mode: multiply;
+    background-size: cover;
+  }
+  
+  /* Font for western style */
+  .font-western {
+    font-family: 'Rye', serif;
+  }
+}
+
+@layer utilities {
+  /* Western theme colors */
+  .text-western-hearts {
+    color: #8b0000;
+  }
+  
+  .text-western-diamonds {
+    color: #8b0000;
+  }
+  
+  .text-western-clubs {
+    color: #2d2d2d;
+  }
+  
+  .text-western-spades {
+    color: #2d2d2d;
+  }
+  
+  .text-western-brown {
+    color: #3c2b1a;
+  }
+  
+  .text-western-gold {
+    color: #b18830;
+  }
+  
+  .bg-western-hearts {
+    background-color: #8b0000;
+  }
+  
+  .bg-western-diamonds {
+    background-color: #8b0000;
+  }
+  
+  .bg-western-clubs {
+    background-color: #2d2d2d;
+  }
+  
+  .bg-western-spades {
+    background-color: #2d2d2d;
+  }
+  
+  .bg-western-primary {
+    background-color: #3c2b1a;
+  }
+  
+  .bg-western-gold {
+    background-color: #b18830;
+  }
+  
+  .border-western-border {
+    border-color: #8c7851;
+  }
+  
+  .border-western-dark {
+    border-color: #3c2b1a;
+  }
+}
