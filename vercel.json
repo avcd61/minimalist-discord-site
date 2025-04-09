@@ -27,6 +27,12 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "devCommand": "npm run dev",
+  "env": {
+    "DISCORD_BOT_TOKEN": "@discord_bot_token",
+    "DISCORD_GUILD_ID": "@discord_guild_id",
+    "DISCORD_PUBLIC_TOKEN": "@discord_public_token",
+    "VITE_DISCORD_PUBLIC_TOKEN": "@discord_public_token"
+  },
   "headers": [
     {
       "source": "/api/(.*)",

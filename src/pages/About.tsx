@@ -9,7 +9,46 @@ const About = () => {
 
   useEffect(() => {
     setLoaded(true);
-    // Для строгого стиля не нужны частицы и сложные анимации
+
+    // Create particles on load
+    const createParticles = () => {
+      const container = document.querySelector('.about-trail-container');
+      if (!container) return;
+
+      for (let i = 0; i < 15; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random size between 5px and 15px
+        const size = Math.random() * 10 + 5;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random position within the container
+        const posX = Math.random() * container.clientWidth;
+        const posY = Math.random() * 50 + 80; // Position near the title
+        particle.style.left = `${posX}px`;
+        particle.style.top = `${posY}px`;
+        
+        // Random delay for animation
+        particle.style.animationDelay = `${Math.random() * 2}s`;
+        
+        container.appendChild(particle);
+        
+        // Remove particles after animation completes
+        setTimeout(() => {
+          if (particle.parentNode === container) {
+            container.removeChild(particle);
+          }
+        }, 2000);
+      }
+    };
+
+    // Create particles initially and then at intervals
+    createParticles();
+    const particleInterval = setInterval(createParticles, 3000);
+
+    return () => clearInterval(particleInterval);
   }, []);
 
   const team = [
@@ -76,14 +115,13 @@ const About = () => {
   return (
     <div className="container max-w-5xl py-24 space-y-12">
       <div className="text-center space-y-4 animate-fade-in">
-        <div className="about-title-3d-container">
-          <div className="about-glow-background"></div>
-          <h1 className="about-title-3d">
-            <span className="about-title-text">О</span>
-            <span className="about-title-text">нас</span>
-          </h1>
+        <div className="about-trail-container">
+          <h1 className="about-trail-text">О нас</h1>
+          <div className="trail-shadow" style={{ transform: 'translateY(15px)' }}>О нас</div>
+          <div className="trail-shadow" style={{ transform: 'translateY(20px)' }}>О нас</div>
+          <div className="trail-shadow" style={{ transform: 'translateY(25px)' }}>О нас</div>
         </div>
-        <p className="text-lg text-muted-foreground mt-8">
+        <p className="text-lg text-muted-foreground">
           Познакомьтесь с основными 95 братухами, которые делают лютые завозы.
         </p>
       </div>

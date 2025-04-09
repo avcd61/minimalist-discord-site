@@ -13,7 +13,6 @@ import { Button } from "./ui/button";
 import { Slider } from "./ui/slider";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { useMusicPlayer } from "@/hooks/use-music-player";
 
 const playlist = [
   {
@@ -94,7 +93,6 @@ const playlist = [
 ];
 
 const MusicPlayer = () => {
-  const { isMusicEnabled } = useMusicPlayer();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [volume, setVolume] = useState(50);
@@ -188,13 +186,6 @@ const MusicPlayer = () => {
     }
   }, [currentTrack, isPlaying]);
 
-  useEffect(() => {
-    if (!isMusicEnabled && audioRef.current) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    }
-  }, [isMusicEnabled]);
-
   const playerVariants = {
     open: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: "easeInOut" } },
     minimized: { opacity: 0, scale: 0.5, transition: { duration: 0.3, ease: "easeInOut" } },
@@ -204,10 +195,6 @@ const MusicPlayer = () => {
     open: { opacity: 0, scale: 0.5, transition: { duration: 0.3, ease: "easeInOut" } },
     minimized: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: "easeInOut" } },
   };
-
-  if (!isMusicEnabled) {
-    return null;
-  }
 
   return (
     <>

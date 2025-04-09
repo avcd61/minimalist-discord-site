@@ -1,5 +1,5 @@
+
 import type { Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   darkMode: ["class"],
@@ -19,15 +19,6 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
-        montserrat: ["Montserrat", "sans-serif"],
-        kanit: ["var(--font-kanit)"],
-        serif: ["Playfair Display", "serif"],
-        mono: ["Roboto Mono", "monospace"],
-        inter: ["Inter", "sans-serif"],
-        western: ["Rye", "serif"],
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -83,16 +74,16 @@ export default {
           text: "#4a3f35",
         },
         western: {
-          paper: "#F5E9D0",
-          gold: "#B38B30",
-          brown: "#5D3A18",
-          border: "#5D3A18",
-          hearts: "#BF0000",
-          diamonds: "#BF0000",
-          clubs: "#000000",
-          spades: "#000000",
+          paper: "#f5ecd5",
+          hearts: "#8b0000",
+          diamonds: "#8b0000",
+          clubs: "#2d2d2d",
+          spades: "#2d2d2d",
+          border: "#8c7851",
           primary: "#3c2b1a",
           secondary: "#5c4731",
+          gold: "#b18830",
+          brown: "#3c2b1a",
           sand: "#d3bc8d",
           leather: "#8c6e42",
         },
@@ -131,53 +122,17 @@ export default {
           "0%": { transform: "rotateY(0deg)" },
           "100%": { transform: "rotateY(180deg)" },
         },
-        "fadeIn": {
+        fadeIn: {
           from: { opacity: "0", transform: "translateY(10px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
-        "fadeOut": {
+        fadeOut: {
           from: { opacity: "1", transform: "translateY(0)" },
           to: { opacity: "0", transform: "translateY(-10px)" },
         },
-        "levitate": {
-          "0%, 100%": {
-            transform: "translateY(0)",
-          },
-          "50%": {
-            transform: "translateY(-10px)",
-          },
-        },
-        "ripple": {
-          "0%": {
-            width: "0px", 
-            height: "0px", 
-            opacity: "0.5",
-            transform: "translate(-50%, -50%) scale(0)"
-          },
-          "100%": {
-            width: "500px", 
-            height: "500px", 
-            opacity: "0",
-            transform: "translate(-50%, -50%) scale(1)"
-          }
-        },
-        "pulse": {
-          "0%, 100%": {
-            opacity: "1",
-            transform: "scale(1)"
-          },
-          "50%": {
-            opacity: "0.8",
-            transform: "scale(1.05)"
-          }
-        },
-        "shimmer": {
-          "0%": {
-            backgroundPosition: "-1000px 0",
-          },
-          "100%": {
-            backgroundPosition: "1000px 0",
-          },
+        levitate: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
         },
         tumbleweed: {
           "0%": { transform: "translateX(-100%) rotate(0deg)" },
@@ -192,12 +147,9 @@ export default {
         "fade-in": "fade-in 0.5s ease-out forwards",
         "rotate-slow": "rotate-slow 20s linear infinite",
         "card-flip": "card-flip 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) forwards",
-        "fadeIn": "fadeIn 0.4s ease-out forwards",
-        "fadeOut": "fadeOut 0.4s ease-in forwards",
-        "levitate": "levitate 3s ease-in-out infinite",
-        "ripple": "ripple 1s linear forwards",
-        "pulse": "pulse 2s ease-in-out infinite",
-        "shimmer": "shimmer 2s infinite linear",
+        fadeIn: "fadeIn 0.4s ease-out forwards",
+        fadeOut: "fadeOut 0.4s ease-in forwards",
+        levitate: "levitate 3s ease-in-out infinite",
         tumbleweed: "tumbleweed 15s linear",
       },
       backgroundImage: {
@@ -205,6 +157,20 @@ export default {
         "card-overlay": "url('/textures/card-overlay.png')",
         "noise-pattern": "url('/textures/noise.png')",
         "western-texture": "url('/textures/western-texture.png')",
+      },
+      fontFamily: {
+        serif: ["Playfair Display", "serif"],
+        sans: ["Montserrat", "sans-serif"],
+        mono: ["Roboto Mono", "monospace"],
+        inter: ["Inter", "sans-serif"],
+        montserrat: ["Montserrat", "sans-serif"],
+        western: ["Rye", "serif"],
+      },
+      boxShadow: {
+        card: "0 4px 14px rgba(0, 0, 0, 0.1)",
+        "card-hover": "0 10px 25px rgba(0, 0, 0, 0.15)",
+        "inner-light": "inset 0 0 20px rgba(255, 255, 255, 0.15)",
+        "western": "0 6px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)",
       },
     },
   },
