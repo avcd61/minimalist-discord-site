@@ -23,7 +23,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false
       }
-    }
+    },
+    host: true, // Optional: allows Vite to listen on all interfaces
+    allowedHosts: [
+      '62514830-aa12-464b-9a7e-8081a1929aa4.lovableproject.com'
+    ]
   },
   optimizeDeps: {
     force: true,
