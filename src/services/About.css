@@ -1,4 +1,3 @@
-
 .wavy-effect {
     position: absolute;
     top: 0;
@@ -138,4 +137,160 @@
     transform: translateY(-100px) scale(0);
     opacity: 0;
   }
+}
+
+/* Новые стили для строгой надписи "О нас" */
+.about-title-3d-container {
+  position: relative;
+  overflow: visible;
+  padding: 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  /* Убираем perspective для более строгого вида */
+  perspective: none;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+.about-glow-background {
+  /* Минимальное свечение для строгого стиля */
+  position: absolute;
+  top: 20%;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(155, 135, 245, 0.02) 30%,
+    rgba(155, 135, 245, 0.02) 70%,
+    transparent 100%
+  );
+  filter: blur(10px);
+  opacity: 0.3;
+  /* Убираем анимацию для строгости */
+  animation: none;
+  z-index: -1;
+}
+
+.about-title-3d {
+  position: relative;
+  display: flex;
+  font-weight: 700;
+  font-size: 5rem;
+  text-transform: uppercase;
+  color: white;
+  letter-spacing: 0.05em;
+  transform-style: flat;
+  animation: none;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  transition: letter-spacing 0.3s ease;
+}
+
+.about-title-3d:hover {
+  letter-spacing: 0.08em;
+}
+
+.about-title-text {
+  position: relative;
+  display: inline-block;
+  transform-style: flat;
+  animation: none;
+}
+
+.about-title-text:nth-child(1) {
+  animation-delay: 0;
+  margin-right: 0.5rem;
+}
+
+.about-title-text:nth-child(2) {
+  animation-delay: 0;
+}
+
+.about-title-text::before {
+  display: none;
+}
+
+.about-title-highlight {
+  display: none;
+}
+
+.about-particles-container {
+  display: none;
+}
+
+/* Создаем эффект подчеркивания для строгого стиля */
+.about-title-3d::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 20%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.5) 80%,
+    transparent 100%
+  );
+  transition: all 0.3s ease;
+}
+
+.about-title-3d:hover::after {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.7) 20%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.7) 80%,
+    transparent 100%
+  );
+}
+
+/* Создаем частицы программно в JS, но здесь базовые стили для них */
+.about-particle {
+  position: absolute;
+  background: linear-gradient(135deg, rgba(155, 135, 245, 1) 0%, rgba(107, 63, 160, 0.4) 100%);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: particle-float 4s ease-out forwards;
+  box-shadow: 0 0 15px rgba(155, 135, 245, 0.6);
+}
+
+/* Удаляем ненужные анимации для строгого стиля */
+@keyframes pulse-glow {
+  /* не используется */
+  0% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes title-rotate {
+  /* не используется */
+  0% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes float-letter {
+  /* не используется */
+  0% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes shine-sweep {
+  /* не используется */
+  0% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes particle-float {
+  /* не используется */
+  0% { opacity: 0; }
+  100% { opacity: 0; }
 }

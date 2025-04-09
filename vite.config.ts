@@ -24,5 +24,9 @@ export default defineConfig({
         secure: false
       }
     }
+  },
+  optimizeDeps: {
+    force: true,
+    disabled: false
   }
 });

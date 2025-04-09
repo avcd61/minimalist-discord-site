@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,7 +21,7 @@ const defaultProjects: Project[] = [
   {
     name: "ЗАТО 95",
     logo: "/projects avatars/zato95.jpg",
-    link: "https://discord.gg/PNnSKWNhYE",
+    link: "https://zato95.vercel.app/",
     description: "Касеты... много кассет... Хроники происшествий в ЗАТО 95.",
     images: [
       "/projects avatars/zato95.jpg",
@@ -34,7 +33,7 @@ const defaultProjects: Project[] = [
   {
     name: "Наш Сервер",
     logo: "/projects avatars/3dc5e70a3781cd543b03aa4613d75269.png",
-    link: "https://discord.gg/sbTZgPHq",
+    link: "https://discord.gg/wAmP6pK5Zq",
     description: "Наш сервер, сервер который не пережил падения телефона на клавиатуру. Игровое сообщество с хаотичной историей.",
     images: [
       "/projects avatars/3dc5e70a3781cd543b03aa4613d75269.png",
@@ -250,7 +249,7 @@ const Projects = () => {
             Наши Козыри
           </h1>
           <p className="text-lg text-western-brown/80 font-western font-light max-w-xl mx-auto">
-              Наши козырные карты!
+            Наши козырные карты!
           </p>
           
           <Tabs 
@@ -311,7 +310,7 @@ const Projects = () => {
             closed: {}
           }}
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="sync">
             {isLoaded && filteredProjects.map((project, index) => (
               <ProjectCard 
                 key={`${project.name}-${activeTab}`}
@@ -329,35 +328,6 @@ const Projects = () => {
         project={selectedProject} 
         onClose={() => setSelectedProject(null)} 
       />
-
-      {/* Western decorative elements with improved animations */}
-      <div className="fixed top-20 left-10 opacity-10 pointer-events-none z-0 hidden md:block">
-        <motion.div
-          initial={{ rotate: 0, scale: 0.8, opacity: 0 }}
-          animate={{ rotate: 10, scale: 1, opacity: 0.15 }}
-          transition={{ 
-            rotate: { duration: 40, repeat: Infinity, ease: "linear" },
-            scale: { duration: 1, delay: 1 },
-            opacity: { duration: 2, delay: 1 }
-          }}
-          className="w-24 h-24 bg-contain bg-no-repeat bg-center select-none"
-          style={{ backgroundImage: "url('/textures/western-horseshoe.png')" }}
-        />
-      </div>
-      
-      <div className="fixed bottom-20 right-10 opacity-10 pointer-events-none z-0 hidden md:block">
-        <motion.div
-          initial={{ rotate: 0, scale: 0.8, opacity: 0 }}
-          animate={{ rotate: -15, scale: 1, opacity: 0.15 }}
-          transition={{ 
-            rotate: { duration: 40, repeat: Infinity, ease: "linear" },
-            scale: { duration: 1, delay: 1.5 },
-            opacity: { duration: 2, delay: 1.5 }
-          }}
-          className="w-24 h-24 bg-contain bg-no-repeat bg-center select-none"
-          style={{ backgroundImage: "url('/textures/western-sheriff-badge.png')" }}
-        />
-      </div>
     </div>
   );
 };
