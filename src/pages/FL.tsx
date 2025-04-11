@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Info, Image, ChevronLeft, ChevronRight, X, Server, Users, Calendar, Code, Monitor, Star, Shield, Compass, Sparkles } from "lucide-react";
+import { Info, Image, ChevronLeft, ChevronRight, X, Server, Users, Calendar, Code, Monitor, Star, Shield, Compass, Sparkles, Sun, Waves, Wind, Umbrella } from "lucide-react";
 import { 
   Card, 
   CardContent, 
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // Правильный импорт медиафайлов
@@ -19,49 +19,55 @@ const mediaFiles = [
   '/screenshots FL/Снимок экрана 2021-04-10 130353.png'
 ];
 
-// Данные о сервере
+// Данные о сервере в летнем стиле
 const serverFeatures = [
   {
-    icon: <Server className="h-6 w-6 text-purple-400/90" />,
+    icon: <Sun className="h-6 w-6 text-yellow-300" />,
     title: "Версия",
     value: "1.20.4",
     description: "Последняя версия Minecraft с полной поддержкой плагинов",
-    color: "from-purple-500 to-blue-600"
+    color: "from-yellow-300 to-orange-500",
+    bgColor: "bg-gradient-to-br from-yellow-500/40 to-orange-500/30 bg-black/40"
   },
   {
-    icon: <Users className="h-6 w-6 text-pink-400/90" />,
+    icon: <Users className="h-6 w-6 text-sky-300" />,
     title: "Сообщество",
     value: "Агресивное",
     description: "Только настоящие ценители боев лопатами",
-    color: "from-pink-500 to-red-600"
+    color: "from-sky-300 to-blue-500",
+    bgColor: "bg-gradient-to-br from-sky-500/40 to-blue-500/30 bg-black/40"
   },
   {
-    icon: <Calendar className="h-6 w-6 text-green-400/90" />,
+    icon: <Calendar className="h-6 w-6 text-teal-300" />,
     title: "Активность",
     value: "Постройка писюнов",
     description: "Ежедневные мероприятия и грифферские рейды",
-    color: "from-green-500 to-emerald-600"
+    color: "from-teal-300 to-emerald-500",
+    bgColor: "bg-gradient-to-br from-teal-500/40 to-emerald-500/30 bg-black/40"
   },
   {
-    icon: <Code className="h-6 w-6 text-orange-400/90" />,
+    icon: <Code className="h-6 w-6 text-pink-300" />,
     title: "Особенности",
     value: "Кастомные плагины",
     description: "Уникальные плагины для самого дикого геймплея",
-    color: "from-orange-500 to-amber-600"
+    color: "from-pink-300 to-rose-500",
+    bgColor: "bg-gradient-to-br from-pink-500/40 to-rose-500/30 bg-black/40"
   },
   {
-    icon: <Star className="h-6 w-6 text-yellow-400/90" />,
+    icon: <Star className="h-6 w-6 text-amber-300" />,
     title: "Экономика",
     value: "ВВП на уровне Венесуэлы",
     description: "Торгуй, воруй, грабь - никаких ограничений",
-    color: "from-yellow-500 to-orange-600"
+    color: "from-amber-300 to-orange-500",
+    bgColor: "bg-gradient-to-br from-amber-500/40 to-orange-500/30 bg-black/40"
   },
   {
-    icon: <Shield className="h-6 w-6 text-indigo-400/90" />,
+    icon: <Umbrella className="h-6 w-6 text-sky-300" />,
     title: "Правила",
     value: "Правил нет",
     description: "Только закон джунглей и власть сильнейшего",
-    color: "from-indigo-500 to-violet-600"
+    color: "from-sky-300 to-blue-500",
+    bgColor: "bg-gradient-to-br from-sky-500/40 to-blue-500/30 bg-black/40"
   }
 ];
 
@@ -74,6 +80,31 @@ const FL = () => {
   const containerRef = useRef(null);
   const heroRef = useRef(null);
   const mediaRef = useRef(null);
+  
+  // Эффект параллакса при прокрутке
+  const { scrollY } = useScroll();
+  const cloud1Y = useTransform(scrollY, [0, 1000], [0, -150]);
+  const cloud2Y = useTransform(scrollY, [0, 1000], [0, -80]);
+  const cloud3Y = useTransform(scrollY, [0, 1000], [0, -200]);
+  const bubblesY = useTransform(scrollY, [0, 1000], [0, -100]);
+  const bgWavesY = useTransform(scrollY, [0, 1000], [0, -50]);
+  const midWavesY = useTransform(scrollY, [0, 1000], [0, -120]);
+  const frontWavesY = useTransform(scrollY, [0, 1000], [0, -180]);
+  
+  // Отслеживание позиции мыши
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ 
+        x: e.clientX / window.innerWidth, 
+        y: e.clientY / window.innerHeight 
+      });
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   useEffect(() => {
     // Настройка Intersection Observer для анимации при прокрутке
@@ -182,235 +213,295 @@ const FL = () => {
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen bg-gradient-to-b from-black via-purple-950/50 to-black overflow-hidden relative"
+      className="min-h-screen overflow-hidden relative"
     >
-      {/* Статичный фон */}
-      <div className="absolute inset-0 opacity-40 z-0">
-        {/* Базовая текстура и узор */}
-        <div 
-          className="absolute inset-0 bg-[url('/noise.svg')] opacity-20"
-          style={{
-            backgroundSize: '200px 200px'
+      {/* Красивый градиентный фон с анимированными элементами */}
+      <div className="fixed inset-0 bg-gradient-to-b from-sky-500 via-blue-400 to-cyan-300 -z-50"></div>
+      
+      {/* Анимированные волнистые линии с параллаксом */}
+      <motion.div 
+        className="fixed inset-0 -z-40 opacity-70 overflow-hidden"
+        style={{ y: bgWavesY }}
+      >
+        <svg className="absolute w-full min-w-[1000px]" viewBox="0 0 1200 280" preserveAspectRatio="none">
+          <motion.path 
+            d="M0,160 C300,300 600,100 1200,180 L1200,280 L0,280 Z" 
+            fill="rgba(255, 255, 255, 0.2)"
+            animate={{ 
+              d: [
+                "M0,160 C300,300 600,100 1200,180 L1200,280 L0,280 Z",
+                "M0,180 C300,100 600,200 1200,160 L1200,280 L0,280 Z",
+                "M0,160 C300,300 600,100 1200,180 L1200,280 L0,280 Z"
+              ]
+            }}
+            transition={{ 
+              duration: 12, 
+              repeat: Infinity,
+              ease: "easeInOut" 
+            }}
+          />
+        </svg>
+      </motion.div>
+      
+      <motion.div 
+        className="fixed inset-0 -z-39 opacity-70 overflow-hidden"
+        style={{ y: midWavesY }}
+      >
+        <svg className="absolute w-full min-w-[1000px] top-[10%]" viewBox="0 0 1200 280" preserveAspectRatio="none">
+          <motion.path 
+            d="M0,100 C200,150 400,50 600,100 C800,150 1000,50 1200,100 L1200,280 L0,280 Z" 
+            fill="rgba(255, 255, 255, 0.3)"
+            animate={{ 
+              d: [
+                "M0,100 C200,150 400,50 600,100 C800,150 1000,50 1200,100 L1200,280 L0,280 Z",
+                "M0,50 C200,100 400,150 600,50 C800,100 1000,150 1200,50 L1200,280 L0,280 Z",
+                "M0,100 C200,150 400,50 600,100 C800,150 1000,50 1200,100 L1200,280 L0,280 Z"
+              ]
+            }}
+            transition={{ 
+              duration: 20, 
+              repeat: Infinity,
+              ease: "easeInOut" 
+            }}
+          />
+        </svg>
+      </motion.div>
+      
+      <motion.div 
+        className="fixed inset-0 -z-38 opacity-70 overflow-hidden"
+        style={{ y: frontWavesY }}
+      >
+        <svg className="absolute w-full min-w-[1000px] top-[20%]" viewBox="0 0 1200 280" preserveAspectRatio="none">
+          <motion.path 
+            d="M0,50 C150,100 300,20 450,50 C600,80 750,20 900,50 C1050,80 1200,20 1200,50 L1200,280 L0,280 Z" 
+            fill="rgba(255, 255, 255, 0.2)"
+            animate={{ 
+              d: [
+                "M0,50 C150,100 300,20 450,50 C600,80 750,20 900,50 C1050,80 1200,20 1200,50 L1200,280 L0,280 Z",
+                "M0,20 C150,50 300,100 450,20 C600,50 750,100 900,20 C1050,50 1200,100 1200,20 L1200,280 L0,280 Z",
+                "M0,50 C150,100 300,20 450,50 C600,80 750,20 900,50 C1050,80 1200,20 1200,50 L1200,280 L0,280 Z"
+              ]
+            }}
+            transition={{ 
+              duration: 15, 
+              repeat: Infinity,
+              ease: "easeInOut" 
+            }}
+          />
+        </svg>
+      </motion.div>
+      
+      {/* Круглые блики */}
+      <div className="fixed inset-0 -z-20">
+        <div className="absolute top-[20%] right-[20%] w-64 h-64 rounded-full bg-yellow-300/20 blur-3xl"></div>
+        <div className="absolute top-[50%] left-[10%] w-96 h-96 rounded-full bg-blue-300/20 blur-3xl"></div>
+        <div className="absolute bottom-[20%] right-[30%] w-80 h-80 rounded-full bg-teal-300/20 blur-3xl"></div>
+        
+        <motion.div 
+          className="absolute top-[15%] left-[25%] w-48 h-48 rounded-full bg-purple-300/20 blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.3, 0.2]
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
           }}
         />
         
-        {/* Сетка кубиков (стилизация под Minecraft) */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(40,12,80,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(40,12,80,0.03)_1px,transparent_1px)] bg-[size:32px_32px] opacity-30" />
-
-        {/* Статичные градиентные пятна вместо движущихся */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Пиксельная геометрия (статичная) */}
-          {[...Array(15)].map((_, i) => (
-            <div
-              key={`geo-${i}`}
-              className="absolute rounded-md opacity-20"
-              style={{
-                background: `linear-gradient(to right, 
-                  ${['rgba(139, 92, 246, 0.3)', 'rgba(217, 70, 239, 0.3)', 'rgba(79, 70, 229, 0.3)', 'rgba(16, 185, 129, 0.3)'][i % 4]}, 
-                  ${['rgba(168, 85, 247, 0.1)', 'rgba(236, 72, 153, 0.1)', 'rgba(99, 102, 241, 0.1)', 'rgba(5, 150, 105, 0.1)'][i % 4]})`,
-                width: `${Math.random() * 80 + 40}px`,
-                height: `${Math.random() * 80 + 40}px`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                transform: `rotate(${Math.random() * 20 - 10}deg)`,
-                zIndex: Math.floor(Math.random() * 20) - 10,
-                filter: 'blur(10px)',
-              }}
-            />
-          ))}
+        <motion.div 
+          className="absolute bottom-[30%] left-[40%] w-72 h-72 rounded-full bg-cyan-300/20 blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.3, 0.2, 0.3]
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
         </div>
 
-        <div className="absolute inset-0">
-          {/* Статичные звезды */}
-          {[...Array(80)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full"
-              style={{
-                width: Math.random() * 3 + 1 + 'px',
-                height: Math.random() * 3 + 1 + 'px',
-                left: Math.random() * 100 + '%',
-                top: Math.random() * 100 + '%',
-                opacity: 0.5 + Math.random() * 0.5,
-                background: i % 5 === 0 
-                  ? 'linear-gradient(to right, rgba(216, 180, 254, 0.8), rgba(129, 140, 248, 0.8))' 
-                  : 'rgba(255, 255, 255, 0.8)',
-                boxShadow: i % 5 === 0 
-                  ? '0 0 6px 1px rgba(216, 180, 254, 0.4)' 
-                  : '0 0 4px rgba(255, 255, 255, 0.2)',
+      {/* Облака с анимацией */}
+      <motion.div 
+        className="fixed top-[15%] left-[10%] w-40 h-16 opacity-80 -z-15"
+        animate={{ 
+          x: [0, 20, 0],
+          opacity: [0.7, 0.9, 0.7] 
+        }}
+        transition={{ 
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut" 
+        }}
+      >
+        <motion.div 
+          className="absolute rounded-full bg-white w-16 h-16 left-0 top-0"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ 
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut" 
+          }}
+        />
+            <motion.div
+          className="absolute rounded-full bg-white w-20 h-20 left-10 top-0"
+          animate={{ scale: [1, 0.95, 1] }}
+          transition={{ 
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        />
+        <motion.div 
+          className="absolute rounded-full bg-white w-16 h-16 left-24 top-0"
+          animate={{ scale: [1, 1.05, 1] }}
+              transition={{
+            duration: 7,
+                repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
               }}
             />
-          ))}
+      </motion.div>
           
-          {/* Падающие звезды */}
-          {[...Array(8)].map((_, i) => (
             <motion.div
-              key={`falling-star-${i}`}
-              className="absolute w-[2px] h-[2px] rounded-full bg-white z-20"
-              style={{
-                top: `-10px`,
-                left: `${Math.random() * 100}%`,
-              }}
+        className="fixed top-[25%] right-[30%] w-48 h-16 opacity-80 -z-15"
               animate={{
-                top: ['0%', '100%'],
-                left: [`${Math.random() * 100}%`, `${Math.random() * 100 - 20}%`],
-                opacity: [0, 1, 1, 0],
-                width: ['2px', '3px', '1px'],
-                height: ['2px', '3px', '1px'],
-                boxShadow: [
-                  '0 0 0px rgba(255,255,255,0)',
-                  '0 0 20px rgba(255,255,255,0.8)',
-                  '0 0 0px rgba(255,255,255,0)'
-                ]
+          x: [0, -30, 0],
+          opacity: [0.8, 0.95, 0.8] 
               }}
               transition={{
-                duration: Math.random() * 4 + 4,
+          duration: 20,
                 repeat: Infinity,
-                delay: i * 3 + Math.random() * 10,
-                ease: [0.25, 0.1, 0.25, 1],
-              }}
-            />
-          ))}
-          
-          {/* Улучшенные падающие звезды с хвостом */}
-          {[...Array(3)].map((_, i) => (
-            <motion.div
-              key={`bright-star-${i}`}
-              className="absolute z-20 overflow-visible pointer-events-none"
-              style={{
-                width: '4px',
-                height: '80px',
-                transformOrigin: 'top',
-                willChange: 'transform',
-                perspective: '1000px'
-              }}
-              initial={{
-                top: `-80px`,
-                left: `${Math.random() * 90 + 5}%`,
-                rotate: Math.random() * 20 - 10,
-                opacity: 0
-              }}
-              animate={{
-                top: ['-80px', `${window.innerHeight + 80}px`],
-                left: [`${Math.random() * 90 + 5}%`, `${Math.random() * 80 + 10}%`],
-                opacity: [0, 1, 1, 0],
-                rotate: [Math.random() * 20 - 10, Math.random() * 20 - 10]
-              }}
-              transition={{
-                duration: Math.random() * 5 + 6,
-                repeat: Infinity,
-                delay: i * 8 + Math.random() * 15,
-                ease: 'easeIn',
-                opacity: {
-                  times: [0, 0.1, 0.9, 1],
-                }
-              }}
-            >
-              <div className="relative w-full h-full">
-                <div className="absolute top-0 left-0 right-0 h-full" 
-                  style={{
-                    background: 'linear-gradient(to bottom, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%)',
-                    opacity: 0.7
+          ease: "easeInOut" 
+        }}
+      >
+        <motion.div 
+          className="absolute rounded-full bg-white w-16 h-16 left-0 top-0"
+          animate={{ scale: [1, 1.08, 1] }}
+          transition={{ 
+            duration: 9,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5
                   }}
                 />
                 <motion.div 
-                  className="absolute top-0 left-0 w-4 h-4 rounded-full bg-white"
-                  style={{
-                    boxShadow: '0 0 15px 5px rgba(255,255,255,0.8), 0 0 30px 10px rgba(186,230,253,0.6)'
-                  }}
-                  animate={{
-                    scale: [1, 1.2, 1]
-                  }}
+          className="absolute rounded-full bg-white w-24 h-20 left-12 top-0"
+          animate={{ scale: [1, 0.92, 1] }}
+          transition={{ 
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+        />
+        <motion.div 
+          className="absolute rounded-full bg-white w-16 h-16 left-32 top-0"
+          animate={{ scale: [1, 1.1, 1] }}
                   transition={{
-                    duration: 0.5,
+            duration: 7.5,
                     repeat: Infinity,
-                    repeatType: 'reverse',
+            ease: "easeInOut",
+            delay: 1.5
                   }}
                 />
-              </div>
             </motion.div>
-          ))}
-          
-          {/* Статичные пиксельные элементы Minecraft-стиля */}
-          {[...Array(15)].map((_, i) => (
-            <div
-              key={`pixel-${i}`}
-              className="absolute rounded-sm bg-purple-400/20 z-10"
-              style={{
-                width: '8px',
-                height: '8px',
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                opacity: 0.4 + Math.random() * 0.3,
-                transform: `rotate(${Math.random() * 20 - 10}deg)`,
-              }}
-            />
-          ))}
-          
-          {/* Статичный градиентный акцент */}
-          <div 
-            className="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-r from-purple-600/15 via-pink-600/10 to-blue-600/15 blur-3xl"
+      
+      <motion.div 
+        className="fixed bottom-[45%] left-[20%] w-64 h-20 opacity-70 -z-15"
+        animate={{ 
+          x: [0, 40, 0],
+          opacity: [0.7, 0.85, 0.7] 
+        }}
+        transition={{ 
+          duration: 25,
+          repeat: Infinity,
+          ease: "easeInOut" 
+        }}
+      >
+        <motion.div 
+          className="absolute rounded-full bg-white w-20 h-20 left-0 top-0"
+          animate={{ scale: [1, 1.12, 1] }}
+          transition={{ 
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        />
+        <motion.div 
+          className="absolute rounded-full bg-white w-28 h-24 left-14 top-0"
+          animate={{ scale: [1, 0.9, 1] }}
+          transition={{ 
+            duration: 11,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 3
+          }}
+        />
+        <motion.div 
+          className="absolute rounded-full bg-white w-24 h-20 left-38 top-0"
+          animate={{ scale: [1, 1.07, 1] }}
+          transition={{ 
+            duration: 9,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      </motion.div>
+      
+      {/* Солнце */}
+      <motion.div 
+        className="fixed top-[10%] right-[15%] w-32 h-32 rounded-full bg-yellow-300 shadow-[0_0_100px_rgba(250,204,21,0.5)] -z-10"
+        animate={{ 
+          scale: [1, 1.05, 1],
+          opacity: [0.8, 0.9, 0.8]
+        }}
+        transition={{ 
+          duration: 5, 
+          repeat: Infinity,
+          ease: "easeInOut" 
+        }}
+      />
+      
+      {/* Анимированные рыбки, появляющиеся и исчезающие */}
+      <div className="fixed inset-0 -z-15 overflow-hidden">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <motion.div
+            key={`fish-${i}`}
+            className={`absolute ${i % 2 === 0 ? 'text-amber-300/60' : 'text-cyan-300/60'}`}
             style={{
-              left: '50%',
-              top: '30%',
-              transform: 'translate(-50%, -50%)',
-              mixBlendMode: 'soft-light',
-              background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(196, 181, 253, 0.05) 50%, transparent 80%)',
+              width: Math.random() * 30 + 15,
+              height: Math.random() * 30 + 15,
+              left: `-5%`,
+              top: `${Math.random() * 60 + 20}%`,
             }}
-          />
-          
-          {/* Статичные орбитальные элементы */}
-          <div className="absolute left-1/2 top-1/2 w-0 h-0">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={`orbit-${i}`}
-                className="absolute rounded-full"
-                style={{
-                  width: '4px',
-                  height: '4px',
-                  top: `${Math.sin(Math.PI * 2 / 3 * i) * 40}vh`,
-                  left: `${Math.cos(Math.PI * 2 / 3 * i) * 40}vh`,
-                  opacity: 0.6,
-                  background: i === 0 
-                    ? 'linear-gradient(to right, rgba(216, 180, 254, 0.8), rgba(129, 140, 248, 0.8))' 
-                    : i === 1 
-                      ? 'linear-gradient(to right, rgba(249, 168, 212, 0.8), rgba(216, 180, 254, 0.8))' 
-                      : 'linear-gradient(to right, rgba(129, 140, 248, 0.8), rgba(74, 222, 128, 0.8))',
-                  boxShadow: '0 0 10px 2px rgba(216, 180, 254, 0.3)',
-                }}
-              />
-            ))}
-          </div>
-          
-          {/* Статичные градиентные круги */}
-          <div 
-            className="absolute -bottom-64 -left-64 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-blue-600/10 to-purple-600/5 blur-3xl"
-            style={{
-              opacity: 0.4,
+            animate={{ 
+              x: ['0%', '110%'], 
+              y: [0, Math.random() * 30 - 15, 0],
+              rotateY: i % 2 === 0 ? 0 : 180
             }}
-          />
-          
-          <div 
-            className="absolute -bottom-32 right-0 w-[300px] h-[300px] rounded-full bg-gradient-to-r from-purple-600/10 to-pink-600/5 blur-3xl"
-            style={{
-              opacity: 0.3,
+            transition={{
+              duration: Math.random() * 20 + 20,
+              repeat: Infinity,
+              ease: "linear",
+              delay: Math.random() * 10
             }}
-          />
-          
-          <div 
-            className="absolute top-32 -right-32 w-[400px] h-[400px] rounded-full bg-gradient-to-r from-violet-600/10 to-indigo-600/5 blur-3xl"
-            style={{
-              opacity: 0.3,
-            }}
-          />
-          
-          {/* Дискретная сетка для Minecraft-стиля */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(99,102,241,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(99,102,241,0.01)_1px,transparent_1px)] bg-[size:64px_64px]"></div>
-        </div>
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12,20l-3.5-6.5C7.61,12.58,7,11.34,7,10c0-3.31,2.69-6,6-6s6,2.69,6,6c0,1.34-0.62,2.58-1.5,3.5L12,20z M12,5.84 C10.58,5.84,9.42,6.99,9.42,8.42c0,1.42,1.16,2.58,2.58,2.58c1.42,0,2.58-1.16,2.58-2.58C14.58,6.99,13.42,5.84,12,5.84z"/>
+            </svg>
+          </motion.div>
+        ))}
       </div>
 
       {/* Основной контент */}
-      <div className="relative z-20 pt-16 pb-24 space-y-20">
+      <div className="relative z-20 pt-16 pb-24 space-y-20 backdrop-blur-[1px]">
         {/* Героическая секция */}
         <section ref={heroRef} className="container px-4 mx-auto mb-16">
           <motion.div 
@@ -424,8 +515,8 @@ const FL = () => {
               variants={fadeInUp}
               custom={0}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 blur-xl opacity-60 rounded-full animate-pulse" />
-              <Compass className="w-16 h-16 mx-auto text-white relative z-10" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-cyan-400 to-sky-400 blur-xl opacity-60 rounded-full animate-pulse" />
+              <Waves className="w-16 h-16 mx-auto text-white relative z-10" />
             </motion.div>
             
             <motion.h1 
@@ -433,8 +524,8 @@ const FL = () => {
               variants={fadeInUp}
               custom={1}
             >
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 animate-gradient-x inline-block">Frontier</span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 via-yellow-500 to-green-500 animate-gradient-x inline-block">Land</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 inline-block">Frontier</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 inline-block">Land</span>
             </motion.h1>
             
             <motion.div 
@@ -442,10 +533,10 @@ const FL = () => {
               variants={fadeInUp}
               custom={2}
             >
-              <Badge className="bg-gradient-to-r from-purple-700 to-purple-800 text-white hover:from-purple-600 hover:to-purple-700 border-none py-1.5 px-3 text-sm font-medium">Minecraft</Badge>
-              <Badge className="bg-gradient-to-r from-pink-700 to-pink-800 text-white hover:from-pink-600 hover:to-pink-700 border-none py-1.5 px-3 text-sm font-medium">1.20.4</Badge>
-              <Badge className="bg-gradient-to-r from-blue-700 to-blue-800 text-white hover:from-blue-600 hover:to-blue-700 border-none py-1.5 px-3 text-sm font-medium">Зига на спавне</Badge>
-              <Badge className="bg-gradient-to-r from-green-700 to-green-800 text-white hover:from-green-600 hover:to-green-700 border-none py-1.5 px-3 text-sm font-medium">Кастомные фермы железа</Badge>
+              <Badge className="bg-gradient-to-r from-blue-400 to-blue-500 text-white hover:from-blue-500 hover:to-blue-600 border-none py-1.5 px-3 text-sm font-medium">Minecraft</Badge>
+              <Badge className="bg-gradient-to-r from-cyan-400 to-cyan-500 text-white hover:from-cyan-500 hover:to-cyan-600 border-none py-1.5 px-3 text-sm font-medium">1.20.4</Badge>
+              <Badge className="bg-gradient-to-r from-teal-400 to-teal-500 text-white hover:from-teal-500 hover:to-teal-600 border-none py-1.5 px-3 text-sm font-medium">Зига на спавне</Badge>
+              <Badge className="bg-gradient-to-r from-amber-400 to-amber-500 text-white hover:from-amber-500 hover:to-amber-600 border-none py-1.5 px-3 text-sm font-medium">Кастомные фермы железа</Badge>
             </motion.div>
             
             <motion.p 
@@ -636,23 +727,28 @@ const FL = () => {
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true, amount: 0.1 }}
-                  whileHover={{ y: -5, scale: 1.02 }}
+                  whileHover={{ y: -8, scale: 1.03 }}
                   className="relative rounded-xl overflow-hidden group isolate"
                 >
-                  <div className={`absolute -inset-1 bg-gradient-to-r ${feature.color} rounded-xl blur opacity-20 group-hover:opacity-60 transition duration-500 group-hover:duration-200 z-0`}></div>
+                  <div className={`absolute -inset-0.5 bg-gradient-to-r ${feature.color} rounded-xl blur-sm opacity-50 group-hover:opacity-80 group-hover:blur transition duration-300 group-hover:duration-200 z-0`}></div>
                   
-                  <Card className="border-0 bg-black/80 backdrop-blur-sm relative h-full z-10">
+                  <Card className={`border-0 ${feature.bgColor} backdrop-blur-sm relative h-full z-10 shadow-xl overflow-hidden`}>
+                    <div className="absolute inset-0 bg-gradient-to-br from-black/50 to-black/30 rounded-xl"></div>
+                    <div className="absolute right-0 top-0 w-24 h-24 bg-gradient-to-bl from-white/10 to-transparent rounded-bl-full"></div>
+                    
                     <CardHeader>
-                      <div className="bg-gradient-to-br from-purple-900/50 to-transparent p-3 rounded-xl w-fit mb-3">
+                      <div className={`bg-gradient-to-br ${feature.color} p-3 rounded-xl w-fit mb-3 shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                         {feature.icon}
                       </div>
-                      <CardTitle className="text-white">{feature.title}</CardTitle>
-                      <CardDescription className="text-purple-100 text-lg font-medium">
+                      <CardTitle className="text-white text-xl transition-all duration-300 group-hover:text-white group-hover:scale-105 group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">
+                        {feature.title}
+                      </CardTitle>
+                      <CardDescription className={`bg-clip-text text-transparent bg-gradient-to-r ${feature.color} text-lg font-bold transition-all duration-300 group-hover:font-extrabold group-hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]`}>
                         {feature.value}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-purple-200 text-sm">{feature.description}</p>
+                      <p className="text-sky-100 text-sm transition-all duration-300 group-hover:text-white group-hover:font-medium group-hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">{feature.description}</p>
                     </CardContent>
                   </Card>
                 </motion.div>

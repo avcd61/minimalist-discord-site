@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Waves, Sun } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
-import { FaSteam } from 'react-icons/fa';
+import { FaSteam, FaDiscord, FaTelegram } from 'react-icons/fa';
 import { motion, useScroll, useTransform } from "framer-motion";
 
 const Index = () => {
@@ -15,7 +15,7 @@ const Index = () => {
     offset: ["start start", "end start"]
   });
   
-  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   // Обработчик для предотвращения контекстного меню
@@ -31,12 +31,10 @@ const Index = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Настройка видео
     video.muted = true;
     video.loop = true;
     video.playsInline = true;
 
-    // Установка размеров canvas
     const updateCanvasSize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -44,34 +42,31 @@ const Index = () => {
     updateCanvasSize();
     window.addEventListener("resize", updateCanvasSize);
 
-    // Рендеринг видео на canvas с увеличенным размытием
     const renderVideo = () => {
-      ctx.filter = "blur(10px)"; // Увеличили размытие с 4px до 10px
-      ctx.globalAlpha = 0.5; // Прозрачность остаётся прежней
+      ctx.filter = "blur(10px)"; // Размытие оставлено
+      ctx.globalAlpha = 0.5;    // Прозрачность оставлена
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       requestAnimationFrame(renderVideo);
     };
 
-    // Старт воспроизведения
     const handleCanPlay = () => {
       video
         .play()
         .then(() => {
-          console.log("Видео воспроизводится");
-          renderVideo(); // Начинаем рендеринг
-          setIsLoaded(true); // Устанавливаем флаг загрузки
+          console.log("Новое видео воспроизводится");
+          renderVideo(); 
+          setIsLoaded(true); 
         })
         .catch((error) => {
-          console.error("Ошибка воспроизведения:", error);
+          console.error("Ошибка воспроизведения нового видео:", error);
         });
     };
 
     video.addEventListener("canplay", handleCanPlay);
 
-    // Очистка
     return () => {
       video.removeEventListener("canplay", handleCanPlay);
-      window.addEventListener("resize", updateCanvasSize);
+      window.removeEventListener("resize", updateCanvasSize); 
     };
   }, []);
 
@@ -81,7 +76,7 @@ const Index = () => {
     visible: { 
       opacity: 1,
       transition: { 
-        duration: 0.5,
+        duration: 0.6, // Чуть дольше для плавности
         when: "beforeChildren",
         staggerChildren: 0.2
       }
@@ -90,11 +85,11 @@ const Index = () => {
 
   // Варианты анимации для дочерних элементов
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 30, opacity: 0 }, // Чуть больше сдвиг для эффекта "всплытия"
     visible: { 
       y: 0, 
       opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 24 }
+      transition: { type: "spring", stiffness: 100, damping: 15 } // Мягче пружина
     }
   };
 
@@ -104,7 +99,7 @@ const Index = () => {
       className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden"
       style={{ position: 'relative' }}
     >
-      {/* Скрытое видео */}
+      {/* Изменяем путь к видео */}
       <video
         ref={videoRef}
         autoPlay
@@ -112,10 +107,10 @@ const Index = () => {
         muted
         playsInline
         preload="auto"
-        src="/01119 (1).mp4"
+        src="/lovable-uploads/455922_Venice Beach_Los Angeles_1920x1080.mp4" // Новый путь к видео
         onContextMenu={handleContextMenu}
-        onError={(e) => console.error("Ошибка загрузки видео:", e)}
-        style={{ display: "none" }} // Скрываем видео
+        onError={(e) => console.error("Ошибка загрузки видео:", e)} 
+        style={{ display: "none" }} 
       />
 
       {/* Canvas для рендеринга с параллакс-эффектом */}
@@ -126,10 +121,10 @@ const Index = () => {
         onContextMenu={handleContextMenu}
       />
 
-      <div className="absolute inset-0 bg-background/50 -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-summer-sky-light/20 via-transparent to-transparent -z-10" />
 
       <motion.div 
-        className="max-w-2xl text-center space-y-6"
+        className="max-w-2xl text-center space-y-6 z-10"
         variants={containerVariants}
         initial="hidden"
         animate={isLoaded ? "visible" : "hidden"}
@@ -149,87 +144,67 @@ const Index = () => {
 
         <motion.span 
           variants={itemVariants}
-          className="px-3 py-1 text-sm font-medium rounded-full glass inline-block"
+          className="px-4 py-2 text-sm font-medium rounded-full bg-summer-sand/90 text-summer-text/90 inline-block backdrop-blur-sm shadow"
         >
-          Присоединяйтесь к нашим братухам
+          Время освежиться!
         </motion.span>
 
         <motion.h1 
           variants={itemVariants}
-          className="text-4xl sm:text-5xl font-montserrat font-bold tracking-tight"
+          className="text-4xl sm:text-6xl font-montserrat font-bold tracking-tight summer-gradient-text bg-gradient-to-r from-summer-coral to-summer-sea [text-shadow:1px_1px_3px_rgba(0,0,0,0.2)]"
         >
-          Сигма тот кто 95!
+          Летний Завоз 95 🌴 
         </motion.h1>
 
         <motion.p 
           variants={itemVariants}
-          className="text-lg text-muted-foreground"
+          className="text-lg text-white font-medium [text-shadow:0px_2px_4px_rgba(0,0,0,0.7)] bg-black/20 backdrop-blur-sm rounded-lg px-4 py-2"
         >
-          Присоединяйтесь к нашему дружному сообществу. Общайтесь, находите новых 95 братух и участвуйте в завозах.
+          Залетай к солнцеликим! Отдыхаем, пьём пиво и участвуем в жарких паровозиках.
         </motion.p>
 
         <motion.div 
           variants={itemVariants}
-          className="flex flex-wrap justify-center gap-8"
+          className="flex flex-wrap justify-center gap-8 pt-4"
         >
-          {/* Discord кнопка с улучшенным эффектом */}
-          <motion.button
+          {/* Discord кнопка в стиле Cyberpunk светящаяся */}
+          <button
             onClick={() => window.open("https://discord.gg/PNnSKWNhYE", "_blank")}
-            className="cyber-button relative overflow-hidden"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="relative inline-block text-sm group px-8 py-3"
           >
-            <div className="cyber-button-glitch" />
-            <div className="cyber-button-content">
-              <svg 
-                className="cyber-button-icon"
-                viewBox="0 0 127.14 96.36"
-                style={{ fill: '#ffffff' }}
-              >
-                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
-              </svg>
-              <span className="cyber-button-text">
-                Присоединиться к Discord
-              </span>
-            </div>
-            <motion.div 
-              className="absolute inset-0 bg-white/10"
-              initial={{ x: "-100%", opacity: 0.5 }}
-              whileHover={{ x: "100%", opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            />
-          </motion.button>
+            <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-purple-700 group-hover:-translate-x-0 group-hover:-translate-y-0"></span>
+            <span className="absolute inset-0 w-full h-full bg-indigo-800 border-2 border-indigo-400 group-hover:bg-indigo-900"></span>
+            <span className="relative text-white text-base font-bold flex items-center justify-center">
+              <FaDiscord className="mr-2 h-5 w-5" />
+              Discord
+            </span>
+          </button>
 
-          {/* Steam кнопка с улучшенным эффектом */}
-          <motion.button
-            className="neon-button"
+          {/* Steam кнопка в стиле Cyberpunk светящаяся */}
+          <button
             onClick={() => window.open('https://steamcommunity.com/groups/FRSOOfficial', '_blank')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="relative inline-block text-sm group px-8 py-3"
           >
-            <div className="neon-border" />
-            <div className="neon-button-content">
-              <FaSteam className="cyber-button-icon" style={{ 
-                marginRight: "32px", // Уменьшенный отступ справа (было 16px в стилях)
-                marginLeft: "8px",  // Добавленный отступ слева
-                position: "relative", // Позиционирование
-                top: "0px"        // Вертикальное смещение (можно менять для перемещения вверх/вниз)
-              }} />
-              <span>Steam</span>
-            </div>
-            <div className="neon-lines">
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className="neon-line"
-                  style={{
-                    top: `${25 + i * 25}%`,
-                    animationDelay: `${i * 0.5}s`
-                  }}
-                />
-              ))}
-            </div>
-          </motion.button>
+            <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-blue-700 group-hover:-translate-x-0 group-hover:-translate-y-0"></span>
+            <span className="absolute inset-0 w-full h-full bg-slate-800 border-2 border-blue-400 group-hover:bg-slate-900"></span>
+            <span className="relative text-white text-base font-bold flex items-center justify-center">
+              <FaSteam className="mr-2 h-5 w-5" />
+              Steam
+            </span>
+          </button>
+
+          {/* Telegram кнопка в стиле Cyberpunk светящаяся */}
+          <button
+            onClick={() => window.open('https://t.me/+abSXXaH4cf9hNTky', '_blank')}
+            className="relative inline-block text-sm group px-8 py-3"
+          >
+            <span className="absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-cyan-600 group-hover:-translate-x-0 group-hover:-translate-y-0"></span>
+            <span className="absolute inset-0 w-full h-full bg-sky-800 border-2 border-cyan-400 group-hover:bg-sky-900"></span>
+            <span className="relative text-white text-base font-bold flex items-center justify-center">
+              <FaTelegram className="mr-2 h-5 w-5" />
+              Telegram
+            </span>
+          </button>
         </motion.div>
       </motion.div>
     </div>
