@@ -11,6 +11,96 @@ const Rules = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  // Инициализация видео фона
+  useEffect(() => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    video.muted = false;
+    video.loop = true;
+    video.playsInline = true;
+    video.volume = 0.3;
+    
+    // Обработчик для предотвращения контекстного меню
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+      return false;
+    };
+    
+    video.addEventListener('contextmenu', handleContextMenu);
+    canvas.addEventListener('contextmenu', handleContextMenu);
+    
+    const updateCanvasSize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    
+    updateCanvasSize();
+    window.addEventListener("resize", updateCanvasSize);
+    
+    const renderVideo = () => {
+      if (video.paused) return;
+      ctx.filter = "none";
+      ctx.globalAlpha = 0.8;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      requestAnimationFrame(renderVideo);
+    };
+    
+    // Функция для повторной попытки воспроизведения
+    const tryPlayVideo = () => {
+      if (video.paused) {
+        video.play().catch(error => {
+          console.log("Автовоспроизведение не удалось, ожидаем взаимодействия пользователя:", error);
+        });
+      }
+    };
+    
+    const handleCanPlay = () => {
+      video
+        .play()
+        .then(() => {
+          console.log("Видео на странице правил воспроизводится");
+          renderVideo();
+          setIsLoaded(true);
+        })
+        .catch((error) => {
+          console.error("Ошибка воспроизведения видео на странице правил:", error);
+          // Добавляем обработчики событий взаимодействия для восстановления воспроизведения
+          document.addEventListener('click', tryPlayVideo, { once: true });
+          document.addEventListener('touchstart', tryPlayVideo, { once: true });
+          document.addEventListener('scroll', tryPlayVideo, { once: true });
+        });
+    };
+    
+    // Обработка видимости страницы
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        tryPlayVideo();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    video.addEventListener("canplay", handleCanPlay);
+    
+    // Если страница активна, пробуем запустить видео периодически
+    const playInterval = setInterval(tryPlayVideo, 3000);
+    
+    return () => {
+      video.removeEventListener("canplay", handleCanPlay);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      video.removeEventListener('contextmenu', handleContextMenu);
+      canvas.removeEventListener('contextmenu', handleContextMenu);
+      window.removeEventListener("resize", updateCanvasSize);
+      clearInterval(playInterval);
+    };
+  }, []);
 
   // Слежение за движением мыши для интерактивного фона
   useEffect(() => {
@@ -110,6 +200,29 @@ const Rules = () => {
       ref={containerRef}
       className="min-h-screen py-24 px-4 relative"
     >
+      {/* Скрытое видео */}
+      <video
+        ref={videoRef}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        src="/lovable-uploads/MGE.mp4"
+        style={{ display: "none" }}
+        onContextMenu={(e) => e.preventDefault()}
+      />
+
+      {/* Canvas для рендеринга видео */}
+      <motion.canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full object-cover -z-30 pointer-events-none select-none"
+        onContextMenu={(e) => e.preventDefault()}
+      />
+
+      {/* Дополнительный слой затемнения */}
+      <div className="absolute inset-0 bg-black/10 -z-20" />
+
       {/* Динамический градиентный фон, реагирующий на движение мыши */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <motion.div 

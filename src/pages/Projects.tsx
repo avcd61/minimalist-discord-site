@@ -14,7 +14,7 @@ interface Particle {
   dy: number;
   alpha: number;
   color: string;
-  isTumbleweed?: boolean; // Make this property optional
+  isBubble?: boolean; // Изменено с isTumbleweed на isBubble
 }
 
 const defaultProjects: Project[] = [
@@ -100,6 +100,11 @@ const Projects = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
 
+  // Устанавливаем isLoaded в true при монтировании компонента
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
   // Improved canvas animation with performance optimization
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -116,32 +121,32 @@ const Projects = () => {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Optimized particle creation with less particles for better performance
+    // Создаем пузырьки вместо частиц пыли
     let particles: Particle[] = Array.from({ length: 60 }, () => ({
       x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * 2 + 0.5,
-      dx: (Math.random() - 0.5) * 0.5,
-      dy: (Math.random() - 0.5) * 0.5,
-      alpha: Math.random() * 0.5 + 0.2,
-      color: getParticleColor(),
+      y: canvas.height + Math.random() * 20,
+      radius: Math.random() * 4 + 1,
+      dx: (Math.random() - 0.5) * 0.3,
+      dy: -(Math.random() * 1.5 + 0.5), // Движение вверх
+      alpha: Math.random() * 0.5 + 0.3,
+      color: getBubbleColor(),
     }));
 
-    function getParticleColor() {
-      const colors = ["#d3bc8d", "#a88e65", "#8c7851", "#594a32"];
+    function getBubbleColor() {
+      const colors = ["#03A9F4", "#00BCD4", "#4FC3F7", "#81D4FA", "#B3E5FC"];
       return colors[Math.floor(Math.random() * colors.length)];
     }
 
-    // Tumbleweed counter to limit the number of tumbleweeds
-    let tumbleweedCount = 0;
-    const MAX_TUMBLEWEEDS = 3;
+    // Счетчик пузырьков для ограничения их количества
+    let bubbleCount = 0;
+    const MAX_BUBBLES = 5;
 
     const animate = () => {
       if (!ctx || !canvas) return;
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Draw dust particles with optimized rendering
+      // Рисуем пузырьки воздуха в воде
       particles.forEach((particle, index) => {
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
@@ -149,48 +154,59 @@ const Projects = () => {
         ctx.globalAlpha = particle.alpha;
         ctx.fill();
         
-        // Update position with clamping to prevent excessive calculations
-        particle.x += particle.dx;
+        // Добавляем блик на пузырьке
+        ctx.beginPath();
+        ctx.arc(
+          particle.x - particle.radius * 0.3, 
+          particle.y - particle.radius * 0.3, 
+          particle.radius * 0.3, 
+          0, 
+          Math.PI * 2
+        );
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.fill();
+        
+        // Обновляем позицию пузырька с легким покачиванием
+        particle.x += particle.dx + Math.sin(Date.now() * 0.002 + index) * 0.3;
         particle.y += particle.dy;
         
-        // Improved boundary handling
-        if (particle.x < -10) particle.x = canvas.width + 10;
-        if (particle.x > canvas.width + 10) particle.x = -10;
-        if (particle.y < -10) particle.y = canvas.height + 10;
-        if (particle.y > canvas.height + 10) particle.y = -10;
+        // Улучшенная обработка границ
+        if (particle.y < -10) {
+          particle.y = canvas.height + 10;
+          particle.x = Math.random() * canvas.width;
+        }
         
-        // Remove tumbleweeds that have gone offscreen
-        if (particle.isTumbleweed && particle.x > canvas.width + 50) {
+        // Удаляем большие пузыри, которые вышли за экран
+        if (particle.isBubble && particle.y < -30) {
           particles.splice(index, 1);
-          tumbleweedCount--;
+          bubbleCount--;
         }
       });
 
-      // Occasionally create tumbleweeds, with a limit
-      if (Math.random() < 0.002 && tumbleweedCount < MAX_TUMBLEWEEDS) {
-        createTumbleweed();
-        tumbleweedCount++;
+      // Иногда создаем большие пузыри
+      if (Math.random() < 0.01 && bubbleCount < MAX_BUBBLES) {
+        createBubble();
+        bubbleCount++;
       }
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    function createTumbleweed() {
+    function createBubble() {
       const size = Math.random() * 30 + 20;
       particles.push({
-        x: -size,
-        y: canvas.height - size/2 - (Math.random() * 50),
+        x: Math.random() * canvas.width,
+        y: canvas.height + size,
         radius: size,
-        dx: Math.random() * 1 + 0.5,
-        dy: 0,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: -(Math.random() * 1 + 0.5),
         alpha: 0.3,
-        color: "#a88e65",
-        isTumbleweed: true
+        color: "rgba(255, 255, 255, 0.4)",
+        isBubble: true
       });
     }
 
     animationFrameRef.current = requestAnimationFrame(animate);
-    setIsLoaded(true);
 
     return () => {
       if (animationFrameRef.current) {
@@ -214,25 +230,21 @@ const Projects = () => {
     spades: "♠",
   };
 
+  // Летние имена для мастей
+  const suitLabels = {
+    hearts: "Морские",
+    diamonds: "Солнечные",
+    clubs: "Пляжные",
+    spades: "Тропические",
+  };
+
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-western-paper">
-      {/* Background canvas with improved performance */}
-      <canvas ref={canvasRef} className="fixed inset-0 -z-10 opacity-30" />
+    <div className="relative min-h-screen overflow-x-hidden">
+      {/* Минималистичный фон */}
+      <div className="fixed inset-0 -z-30 minimal-sunset-background"></div>
       
-      {/* Improved background texture with blending */}
-      <div className="fixed inset-0 -z-20 bg-noise-pattern opacity-20 mix-blend-overlay" />
-      
-      {/* Decorative line with nails at top */}
-      <div className="fixed top-8 left-10 right-10 h-px bg-western-brown/30 flex justify-between items-center">
-        <div className="w-3 h-3 rounded-full bg-western-brown/70 -translate-y-[50%]"></div>
-        <div className="w-3 h-3 rounded-full bg-western-brown/70 -translate-y-[50%]"></div>
-      </div>
-      
-      {/* Decorative line with nails at bottom */}
-      <div className="fixed bottom-8 left-10 right-10 h-px bg-western-brown/30 flex justify-between items-center">
-        <div className="w-3 h-3 rounded-full bg-western-brown/70 -translate-y-[50%]"></div>
-        <div className="w-3 h-3 rounded-full bg-western-brown/70 -translate-y-[50%]"></div>
-      </div>
+      {/* Фон с пузырьками */}
+      <canvas ref={canvasRef} className="fixed inset-0 -z-20 opacity-40" />
       
       <div className="container py-16 px-4 md:px-6 lg:px-8 mx-auto max-w-7xl relative z-10">
         <motion.div
@@ -245,11 +257,11 @@ const Projects = () => {
             ease: [0.22, 1, 0.36, 1] 
           }}
         >
-          <h1 className="text-4xl md:text-5xl font-western tracking-wide text-western-brown drop-shadow-md">
-            Наши Козыри
+          <h1 className="text-4xl md:text-5xl font-bold tracking-wide text-white drop-shadow-md bg-gradient-to-r from-summer-coral via-summer-gold to-summer-sea bg-clip-text text-transparent">
+            Наши Проекты
           </h1>
-          <p className="text-lg text-western-brown/80 font-western font-light max-w-xl mx-auto">
-            Наши козырные карты!
+          <p className="text-lg text-white/90 max-w-xl mx-auto drop-shadow-md">
+            Великолепная коллекция наших пляжных достижений
           </p>
           
           <Tabs 
@@ -258,40 +270,44 @@ const Projects = () => {
             value={activeTab}
             onValueChange={setActiveTab}
           >
-            <TabsList className="bg-western-paper border-2 border-western-border mx-auto shadow-md">
+            <TabsList className="bg-white/20 backdrop-blur-sm border border-white/30 mx-auto shadow-lg rounded-full">
               <TabsTrigger 
                 value="все" 
-                className="data-[state=active]:bg-western-primary data-[state=active]:text-western-paper font-western"
+                className="data-[state=active]:bg-summer-sea data-[state=active]:text-white text-white/80 rounded-full transition-all"
               >
                 Все проекты
               </TabsTrigger>
               <TabsTrigger 
                 value="избранное" 
-                className="data-[state=active]:bg-western-gold data-[state=active]:text-western-paper font-western"
+                className="data-[state=active]:bg-summer-gold data-[state=active]:text-white text-white/80 rounded-full transition-all"
               >
                 Избранное
               </TabsTrigger>
               <TabsTrigger 
                 value="hearts" 
-                className="data-[state=active]:bg-western-hearts data-[state=active]:text-western-paper text-western-hearts"
+                className="data-[state=active]:bg-summer-coral data-[state=active]:text-white text-summer-coral"
+                title={suitLabels.hearts}
               >
                 {suitSymbols.hearts}
               </TabsTrigger>
               <TabsTrigger 
                 value="diamonds" 
-                className="data-[state=active]:bg-western-diamonds data-[state=active]:text-western-paper text-western-diamonds"
+                className="data-[state=active]:bg-summer-gold data-[state=active]:text-white text-summer-gold"
+                title={suitLabels.diamonds}
               >
                 {suitSymbols.diamonds}
               </TabsTrigger>
               <TabsTrigger 
                 value="clubs" 
-                className="data-[state=active]:bg-western-clubs data-[state=active]:text-western-paper text-western-clubs"
+                className="data-[state=active]:bg-summer-green data-[state=active]:text-white text-summer-green"
+                title={suitLabels.clubs}
               >
                 {suitSymbols.clubs}
               </TabsTrigger>
               <TabsTrigger 
                 value="spades" 
-                className="data-[state=active]:bg-western-spades data-[state=active]:text-western-paper text-western-spades"
+                className="data-[state=active]:bg-summer-blue data-[state=active]:text-white text-summer-blue"
+                title={suitLabels.spades}
               >
                 {suitSymbols.spades}
               </TabsTrigger>
@@ -317,6 +333,7 @@ const Projects = () => {
                 project={project} 
                 index={index}
                 onClick={() => setSelectedProject(project)}
+                theme="summer" // Добавляем пропс для летней темы
               />
             ))}
           </AnimatePresence>
@@ -326,8 +343,56 @@ const Projects = () => {
       {/* Project dialog with improved animations */}
       <ProjectDialog 
         project={selectedProject} 
-        onClose={() => setSelectedProject(null)} 
+        onClose={() => setSelectedProject(null)}
+        theme="summer" // Добавляем пропс для летней темы
       />
+
+      {/* Добавляем стили для пляжной темы */}
+      <style>{`
+        /* Летние цвета для мастей */
+        .text-summer-coral {
+          color: #FF5252;
+        }
+        
+        .text-summer-gold {
+          color: #FFB300;
+        }
+        
+        .text-summer-green {
+          color: #4CAF50;
+        }
+        
+        .text-summer-blue {
+          color: #03A9F4;
+        }
+        
+        .bg-summer-coral {
+          background-color: #FF5252;
+        }
+        
+        .bg-summer-gold {
+          background-color: #FFB300;
+        }
+        
+        .bg-summer-green {
+          background-color: #4CAF50;
+        }
+        
+        .bg-summer-blue {
+          background-color: #03A9F4;
+        }
+
+        /* Минималистичный фон заката */
+        .minimal-sunset-background {
+          background: linear-gradient(to bottom, 
+            #E2B878 0%, /* Песочный цвет вверху */
+            #FFD9A0 15%, 
+            #FFBA56 30%,
+            #F3904F 50%, 
+            #3B4371 70%,
+            #292F58 100%); /* Морской цвет внизу */
+        }
+      `}</style>
     </div>
   );
 };

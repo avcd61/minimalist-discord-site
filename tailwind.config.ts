@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
-export default {
+const config: Config = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -72,29 +72,37 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        vintage: {
-          paper: "#f5f0e1",
-          hearts: "#a12d2b",
-          diamonds: "#a12d2b",
-          clubs: "#2c2c2c",
-          spades: "#2c2c2c",
-          border: "#d3c7a7",
-          stain: "#d3bc8d",
-          text: "#4a3f35",
-        },
-        western: {
-          paper: "#F5E9D0",
-          gold: "#B38B30",
-          brown: "#5D3A18",
-          border: "#5D3A18",
-          hearts: "#BF0000",
-          diamonds: "#BF0000",
-          clubs: "#000000",
-          spades: "#000000",
-          primary: "#3c2b1a",
-          secondary: "#5c4731",
-          sand: "#d3bc8d",
-          leather: "#8c6e42",
+        summer: {
+          sky: {
+            light: "#E0F7FA",
+            DEFAULT: "#4DD0E1",
+            dark: "#00BCD4",
+          },
+          sea: {
+            light: "#B2EBF2",
+            DEFAULT: "#26C6DA",
+            dark: "#0097A7",
+          },
+          sand: {
+            light: "#FFFDE7",
+            DEFAULT: "#FFF9C4",
+            dark: "#FFE082",
+          },
+          coral: {
+            light: "#FFAB91",
+            DEFAULT: "#FF7043",
+            dark: "#F4511E",
+          },
+          wood: {
+            DEFAULT: "#D2B48C",
+            dark: "#A0522D",
+          },
+          text: {
+            DEFAULT: "#424242",
+            dark: "#01579B",
+            light: "#757575",
+          },
+          white: "#FFFFFF",
         },
       },
       borderRadius: {
@@ -183,6 +191,14 @@ export default {
           "0%": { transform: "translateX(-100%) rotate(0deg)" },
           "100%": { transform: "translateX(100vw) rotate(360deg)" },
         },
+        "wave-underline": {
+          '0%, 100%': { 'background-size': '200% 2px' },
+          '50%': { 'background-size': '100% 2px' },
+        },
+        'float-light': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -199,6 +215,8 @@ export default {
         "pulse": "pulse 2s ease-in-out infinite",
         "shimmer": "shimmer 2s infinite linear",
         tumbleweed: "tumbleweed 15s linear",
+        "wave-underline": "wave-underline 1.5s ease-in-out infinite",
+        "float-light": "float-light 4s ease-in-out infinite",
       },
       backgroundImage: {
         "paper-texture": "url('/textures/paper-texture.png')",
@@ -209,4 +227,6 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+};
+
+export default config;
