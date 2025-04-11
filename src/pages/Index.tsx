@@ -107,9 +107,12 @@ const Index = () => {
         muted
         playsInline
         preload="auto"
-        src="/lovable-uploads/455922_Venice Beach_Los Angeles_1920x1080.mp4" // Новый путь к видео
+        src="/lovable-uploads/ocean.mp4" // Исправленный путь к видео
         onContextMenu={handleContextMenu}
-        onError={(e) => console.error("Ошибка загрузки видео:", e)} 
+        onError={(e) => {
+          console.error("Ошибка загрузки видео:", e);
+          setIsLoaded(true); // Показать контент даже при ошибке видео
+        }} 
         style={{ display: "none" }} 
       />
 
